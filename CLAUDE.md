@@ -39,6 +39,24 @@ In Dockerfile / CI, no registry auth needed — the repo is public and `dist/` i
 All MUI and react-admin packages are peer deps (not bundled). The consuming app must have:
 `react`, `react-admin`, `@mui/material`, `@mui/icons-material`
 
-## Key Pattern: AppLayout Uses React Context
+## Key Pattern: Use `createAppLayout()` at Module Level
 
-`AppLayout` passes `version` and `userMenuItems` via `AppLayoutContext`, keeping `CustomAppBar` defined at module level (stable reference). Do NOT inline the AppBar component or pass a factory — react-admin remounts on new component references, breaking UserMenu state.
+react-admin remounts `AppBar` whenever the `appBar` prop receives a new component reference, which resets `UserMenu` state (menu closes immediately on click).
+
+**Always call `createAppLayout()` at MODULE LEVEL**, never inside a component:
+
+```tsx
+// CORRECT — module level, stable references
+export const AppLayout = createAppLayout({
+  version: __APP_VERSION__,
+  userMenuItems: <ChangePasswordMenuItem />,
+})
+
+// WRONG — new component created on every render → UserMenu resets
+export const AppLayout = (props) => {
+  const CustomAppBar = () => <AppBar .../>  // ← breaks UserMenu
+  return <Layout appBar={CustomAppBar} />
+}
+```
+
+The exported `AppLayout` component is a convenience default with no config. For any real app, use `createAppLayout()`.

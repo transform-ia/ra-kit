@@ -1,2 +1,2 @@
-export { AppLayout } from './AppLayout'
+export { AppLayout, createAppLayout } from './AppLayout'
 export { ChangePasswordMenuItem } from './ChangePasswordDialog'

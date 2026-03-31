@@ -1,27 +1,22 @@
 // src/AppLayout.tsx
-import { createContext, useContext } from "react";
 import { Layout, AppBar, UserMenu, Logout } from "react-admin";
 import { Box, Typography } from "@mui/material";
 import { jsx, jsxs } from "react/jsx-runtime";
-var AppLayoutContext = createContext({});
-var CustomUserMenu = () => {
-  const { userMenuItems } = useContext(AppLayoutContext);
-  return /* @__PURE__ */ jsxs(UserMenu, { children: [
+function createAppLayout({ version, userMenuItems } = {}) {
+  const CustomUserMenu = () => /* @__PURE__ */ jsxs(UserMenu, { children: [
     userMenuItems,
     /* @__PURE__ */ jsx(Logout, {})
   ] });
-};
-var CustomAppBar = () => {
-  const { version } = useContext(AppLayoutContext);
-  return /* @__PURE__ */ jsxs(AppBar, { userMenu: /* @__PURE__ */ jsx(CustomUserMenu, {}), children: [
+  const CustomAppBar = () => /* @__PURE__ */ jsxs(AppBar, { userMenu: /* @__PURE__ */ jsx(CustomUserMenu, {}), children: [
     /* @__PURE__ */ jsx(Box, { flex: 1 }),
     version && /* @__PURE__ */ jsxs(Typography, { variant: "caption", color: "inherit", sx: { opacity: 0.7, mr: 1 }, children: [
       "v",
       version
     ] })
   ] });
-};
-var AppLayout = ({ version, userMenuItems, ...props }) => /* @__PURE__ */ jsx(AppLayoutContext.Provider, { value: { version, userMenuItems }, children: /* @__PURE__ */ jsx(Layout, { ...props, appBar: CustomAppBar }) });
+  return (props) => /* @__PURE__ */ jsx(Layout, { ...props, appBar: CustomAppBar });
+}
+var AppLayout = createAppLayout();
 
 // src/ChangePasswordDialog.tsx
 import { useState } from "react";
@@ -146,6 +141,7 @@ var ChangePasswordMenuItem = ({
 };
 export {
   AppLayout,
-  ChangePasswordMenuItem
+  ChangePasswordMenuItem,
+  createAppLayout
 };
 //# sourceMappingURL=index.js.map

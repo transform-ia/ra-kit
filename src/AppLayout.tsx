@@ -1,4 +1,3 @@
-import { createContext, useContext } from 'react'
 import { Layout, AppBar, UserMenu, Logout } from 'react-admin'
 import type { LayoutProps } from 'react-admin'
 import { Box, Typography } from '@mui/material'
@@ -8,21 +7,28 @@ interface AppLayoutConfig {
   userMenuItems?: React.ReactNode
 }
 
-const AppLayoutContext = createContext<AppLayoutConfig>({})
-
-const CustomUserMenu = () => {
-  const { userMenuItems } = useContext(AppLayoutContext)
-  return (
+/**
+ * Creates a stable AppLayout with fixed AppBar and UserMenu.
+ * Call this at MODULE LEVEL (not inside a component) so that
+ * CustomAppBar and CustomUserMenu are stable references — react-admin
+ * remounts AppBar on new component references, resetting UserMenu state.
+ *
+ * @example
+ * // In your AppLayout.tsx — at module level, not inside a component
+ * export const AppLayout = createAppLayout({
+ *   version: __APP_VERSION__,
+ *   userMenuItems: <ChangePasswordMenuItem />,
+ * })
+ */
+export function createAppLayout({ version, userMenuItems }: AppLayoutConfig = {}) {
+  const CustomUserMenu = () => (
     <UserMenu>
       {userMenuItems}
       <Logout />
     </UserMenu>
   )
-}
 
-const CustomAppBar = () => {
-  const { version } = useContext(AppLayoutContext)
-  return (
+  const CustomAppBar = () => (
     <AppBar userMenu={<CustomUserMenu />}>
       <Box flex={1} />
       {version && (
@@ -32,15 +38,12 @@ const CustomAppBar = () => {
       )}
     </AppBar>
   )
+
+  return (props: LayoutProps) => <Layout {...props} appBar={CustomAppBar} />
 }
 
-interface AppLayoutProps extends LayoutProps {
-  version?: string
-  userMenuItems?: React.ReactNode
-}
-
-export const AppLayout = ({ version, userMenuItems, ...props }: AppLayoutProps) => (
-  <AppLayoutContext.Provider value={{ version, userMenuItems }}>
-    <Layout {...props} appBar={CustomAppBar} />
-  </AppLayoutContext.Provider>
-)
+/**
+ * Drop-in AppLayout with version string and extensible UserMenu.
+ * For stable UserMenu state, prefer `createAppLayout()` called at module level.
+ */
+export const AppLayout = createAppLayout()
