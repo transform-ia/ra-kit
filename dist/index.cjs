@@ -36,15 +36,21 @@ __export(index_exports, {
 module.exports = __toCommonJS(index_exports);
 
 // src/AppLayout.tsx
+var import_react = require("react");
 var import_react_admin = require("react-admin");
 var import_material = require("@mui/material");
 var import_jsx_runtime = require("react/jsx-runtime");
-var makeCustomAppBar = (version, userMenuItems) => {
-  const CustomUserMenu = () => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react_admin.UserMenu, { children: [
+var AppLayoutContext = (0, import_react.createContext)({});
+var CustomUserMenu = () => {
+  const { userMenuItems } = (0, import_react.useContext)(AppLayoutContext);
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react_admin.UserMenu, { children: [
     userMenuItems,
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react_admin.Logout, {})
   ] });
-  return () => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react_admin.AppBar, { userMenu: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CustomUserMenu, {}), children: [
+};
+var CustomAppBar = () => {
+  const { version } = (0, import_react.useContext)(AppLayoutContext);
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react_admin.AppBar, { userMenu: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CustomUserMenu, {}), children: [
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_material.Box, { flex: 1 }),
     version && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_material.Typography, { variant: "caption", color: "inherit", sx: { opacity: 0.7, mr: 1 }, children: [
       "v",
@@ -52,13 +58,10 @@ var makeCustomAppBar = (version, userMenuItems) => {
     ] })
   ] });
 };
-var AppLayout = ({ version, userMenuItems, ...props }) => {
-  const CustomAppBar = makeCustomAppBar(version, userMenuItems);
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react_admin.Layout, { ...props, appBar: CustomAppBar });
-};
+var AppLayout = ({ version, userMenuItems, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppLayoutContext.Provider, { value: { version, userMenuItems }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react_admin.Layout, { ...props, appBar: CustomAppBar }) });
 
 // src/ChangePasswordDialog.tsx
-var import_react = require("react");
+var import_react2 = require("react");
 var import_material2 = require("@mui/material");
 var import_Lock = __toESM(require("@mui/icons-material/Lock"), 1);
 var import_react_admin2 = require("react-admin");
@@ -68,11 +71,11 @@ var ChangePasswordMenuItem = ({
   tokenKey = "admin_token"
 }) => {
   const notify = (0, import_react_admin2.useNotify)();
-  const [open, setOpen] = (0, import_react.useState)(false);
-  const [oldPassword, setOldPassword] = (0, import_react.useState)("");
-  const [newPassword, setNewPassword] = (0, import_react.useState)("");
-  const [confirm, setConfirm] = (0, import_react.useState)("");
-  const [saving, setSaving] = (0, import_react.useState)(false);
+  const [open, setOpen] = (0, import_react2.useState)(false);
+  const [oldPassword, setOldPassword] = (0, import_react2.useState)("");
+  const [newPassword, setNewPassword] = (0, import_react2.useState)("");
+  const [confirm, setConfirm] = (0, import_react2.useState)("");
+  const [saving, setSaving] = (0, import_react2.useState)(false);
   const reset = () => {
     setOldPassword("");
     setNewPassword("");
